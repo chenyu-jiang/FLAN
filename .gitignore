@@ -9,3 +9,6 @@ results.json.backup*
 .DS_Store
 .vscode/
 env/
+*.pickle
+*.npy
+/_*.py

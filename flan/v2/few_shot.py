@@ -169,9 +169,17 @@ def register_few_shot_version_of_task(
     full_ex_preprocessors.extend(prep.FLAN_TOKENIZE_LM)
 
   # pylint: disable=protected-access
-  if task.source._num_input_examples:
+  if isinstance(task.source, seqio.TfdsDataSource) and not task.name.startswith("t0_task_adaptation"):
+    try:
+      split_keys = task.source.splits
+      _num_input_examples = {k: task.source.num_input_examples(k) for k in split_keys}
+    except KeyError:
+      _num_input_examples = task.source._num_input_examples
+  else:
+    _num_input_examples = task.source._num_input_examples
+  if _num_input_examples:
     few_shot_data_source._num_input_examples = {
-        k: v - num_shots for k, v in task.source._num_input_examples.items()
+        k: v - num_shots for k, v in _num_input_examples.items()
     }
   # pylint: enable=protected-access
   seqio.TaskRegistry.add(
