@@ -97,7 +97,7 @@ _DEFAULT_TASK_CLUSTERS_ABBREV = collections.OrderedDict([
         'wmt14_enfr',
         'wmt16_translate_deen',
         'wmt16_translate_tren',
-        'wmt16_translate_csen',
+        # 'wmt16_translate_csen',
         'wmt16_translate_fien',
         'wmt16_translate_roen',
         'wmt16_translate_ruen',

@@ -1499,7 +1499,7 @@ def _process_wmt16_translate_ruen(example):
 wmt_language_to_process = {
     'de-en': _process_wmt16_translate_deen,
     'tr-en': _process_wmt16_translate_tren,
-    'cs-en': _process_wmt16_translate_csen,
+    # 'cs-en': _process_wmt16_translate_csen,
     'fi-en': _process_wmt16_translate_fien,
     'ro-en': _process_wmt16_translate_roen,
     'ru-en': _process_wmt16_translate_ruen,
