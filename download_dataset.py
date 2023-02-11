@@ -50,7 +50,8 @@ dataset = seqio.get_mixture_or_task(args.task_or_mixture).get_dataset(
         sequence_length={'inputs':4096,'targets':4096}, # Extranous length to capture all data
         num_epochs=1,
         copy_pretokenized=True,
-        shuffle=True
+        shuffle=True,
+        passthrough_features=["task_name"],
 )
 
 with open(args.output_path, "w") as f:

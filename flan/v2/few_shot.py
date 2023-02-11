@@ -54,6 +54,7 @@ def register_few_shot_version_of_task(
     max_input_length: Optional[int] = None,
     prune_based_on_template_idx: Optional[bool] = False,
     strip_targets: Optional[bool] = False,
+    root_task_name: Optional[str] = None,
 ):
   """Registers a few-shot version of a Task."""
   task = seqio.TaskRegistry.get(base_task_name)
@@ -112,6 +113,11 @@ def register_few_shot_version_of_task(
   # These are the preprocessors we run *after* we have formed few-shot examples.
   # Note that we re-introduce the tokenization steps here.
   full_ex_preprocessors = []
+
+  task_name_adder = functools.partial(
+      prep.add_task_name_to_features,
+      task_name=root_task_name)
+  full_ex_preprocessors.append(task_name_adder)
 
   if prune_based_on_template_idx:
     full_ex_preprocessors.append(prep.prune_fewshot_examples_by_template_idx)

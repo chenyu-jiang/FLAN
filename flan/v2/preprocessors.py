@@ -1496,3 +1496,13 @@ def strip_field(example, field_key="inputs"):
   """Remove `answer is` part in CoT."""
   example[field_key] = tf.strings.strip(example[field_key])
   return example
+
+def add_task_name_to_features(dataset: tf.data.Dataset, task_name: str) -> tf.data.Dataset:
+  def _add_name(ex):
+    if "task_name" in ex or task_name is None:
+      return ex
+    ex["task_name"] = tf.constant(task_name, dtype=tf.string)
+    return ex
+
+  return dataset.map(_add_name,
+                     num_parallel_calls=tf.data.experimental.AUTOTUNE)

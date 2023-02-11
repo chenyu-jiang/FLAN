@@ -263,3 +263,7 @@ for t_name, config in ALL_CANDIDATE_TASK_CONFIGS.items():
     # Tasks that have prep.format_dialog and prep.format_options
     # preprocessors will have non-deterministic versions.
     NON_DETER_TASK_NAMES.append(t_name)
+
+# =========== Add task name to task configs ========== #
+for t_name, config in ALL_CANDIDATE_TASK_CONFIGS.items():
+  config.task_name = t_name

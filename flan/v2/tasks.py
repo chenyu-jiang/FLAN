@@ -16,6 +16,7 @@
 import copy
 import random
 from typing import List, Tuple
+import functools
 
 from flan.v2 import constants
 from flan.v2 import few_shot
@@ -38,11 +39,12 @@ def register_zero_shot_task(zero_shot_name: str,
   else:
     # This batch formatter applies many prompts to a single task.
     formatter = prep.get_batch_formatter(patterns)
+  task_name_adder = [functools.partial(prep.add_task_name_to_features, task_name=zero_shot_config.task_name)]
   for suffix, output_features in constants.TRAIN_TASK_SUFFIXES_AND_FEATURES:
     seqio.TaskRegistry.add(
         zero_shot_name + suffix,
         source=zero_shot_config.source,
-        preprocessors=zero_shot_config.preprocessors + formatter +
+        preprocessors= zero_shot_config.preprocessors + formatter + task_name_adder +
         prep.FLAN_TOKENIZE,
         postprocess_fn=zero_shot_config.postprocess_fn,
         output_features=output_features,
@@ -116,7 +118,7 @@ NON_NIV2_TASK_CONFIGS = {
 }
 for t_name, config in NON_NIV2_TASK_CONFIGS.items():
   flan_pattern_name = utils.t_name_to_flan_pattern_name(t_name)
-
+  task_name_adder = [functools.partial(prep.add_task_name_to_features, task_name=config.task_name)]
   # Few-shot with and without options strings.
   for pattern_dict, pattern_name in [(templates.FEWSHOT_PATTERNS, ""),
                                      (templates.FEWSHOT_PATTERNS_NO_OPTIONS,
@@ -137,8 +139,8 @@ for t_name, config in NON_NIV2_TASK_CONFIGS.items():
         seqio.TaskRegistry.add(
             fewshot_base_task_name + task_suffix,
             source=config.source,
-            preprocessors=config.preprocessors +
-            prep.get_formatter(input_pattern, target_pattern) +
+            preprocessors= config.preprocessors +
+            prep.get_formatter(input_pattern, target_pattern) + task_name_adder +
             prep.FLAN_TOKENIZE,
             postprocess_fn=config.postprocess_fn,
             output_features=task_output_features,
@@ -180,7 +182,7 @@ for t_name, config in NON_NIV2_TASK_CONFIGS.items():
       seqio.TaskRegistry.add(
           fewshot_base_task_name + task_suffix,
           source=config.source,
-          preprocessors=config.preprocessors + mix_formatter +
+          preprocessors= config.preprocessors + mix_formatter + task_name_adder +
           prep.FLAN_TOKENIZE,
           postprocess_fn=config.postprocess_fn,
           output_features=task_output_features,
@@ -219,7 +221,7 @@ for t_name, config in NON_NIV2_TASK_CONFIGS.items():
       seqio.TaskRegistry.add(
           fewshot_base_task_name + task_suffix,
           source=config.source,
-          preprocessors=config.preprocessors + all_formatter +
+          preprocessors= config.preprocessors + all_formatter + task_name_adder +
           prep.FLAN_TOKENIZE,
           postprocess_fn=config.postprocess_fn,
           output_features=task_output_features,
@@ -244,6 +246,7 @@ for t_name, config in task_configs.NIV2_TASK_CONFIGS.items():
   flan_pattern_name = utils.t_name_to_flan_pattern_name(t_name)
   mixed_templates = templates.INLINE_FS_PATTERNS[flan_pattern_name]
   x_shot_templates = templates.FEWSHOT_PATTERNS[flan_pattern_name]
+  task_name_adder = [functools.partial(prep.add_task_name_to_features, task_name=config.task_name)]
 
   # Task names:
   # f'{t_name}_template_mix_five_shot{suffix}'
@@ -272,7 +275,7 @@ for t_name, config in task_configs.NIV2_TASK_CONFIGS.items():
     seqio.TaskRegistry.add(
         fewshot_base_task_name + task_suffix,
         source=config.source,
-        preprocessors=config.preprocessors + all_formatter + prep.FLAN_TOKENIZE,
+        preprocessors= config.preprocessors + all_formatter + task_name_adder + prep.FLAN_TOKENIZE,
         postprocess_fn=config.postprocess_fn,
         output_features=task_output_features,
         metric_fns=config.metric_fns)

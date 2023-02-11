@@ -42,6 +42,7 @@ class TaskConfig:
   num_multi_shots: int = 1
   # TODO(kguu): we should manually decide `num_multi_shots` for every task.
   source_args: Optional[Mapping[str, Any]] = None
+  task_name: Optional[str] = None
 
 
 TASK_CONFIGS: Dict[str, TaskConfig] = {}
@@ -2277,3 +2278,7 @@ TASK_CONFIGS['hellaswag'] = TaskConfig(
     postprocess_fn=None,
     metric_fns=[t5_metrics.accuracy],
 )
+
+# =========== Add task name to task configs ========== #
+for t_name, config in TASK_CONFIGS.items():
+  config.task_name = t_name
