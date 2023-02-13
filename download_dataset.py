@@ -58,11 +58,13 @@ with open(args.output_path, "w") as f:
     for i, example in tqdm(enumerate(dataset.as_numpy_iterator()), total=args.num_examples):
         raw_input_sequence = example['inputs_pretokenized'].decode()
         raw_target_sequence = example['targets_pretokenized'].decode()
+        task_name = example['task_name'].decode()
         json_string = json.dumps(
             {"inputs": raw_input_sequence,
              "targets": raw_target_sequence,
              "input_seq_len": len(example['inputs']),
-             "target_seq_len": len(example['targets'])})
+             "target_seq_len": len(example['targets']),
+             "task_name": task_name})
         f.write(json_string)
         f.write("\n")
         if i >= args.num_examples - 1:
